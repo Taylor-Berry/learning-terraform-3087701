@@ -75,7 +75,6 @@ module "blog_alb" {
       protocol         = "HTTP"
       port             = 80
       target_type      = "instance"
-      target_id        = module.autoscaling.autoscaling_group_arn
     }
   }
 
@@ -83,6 +82,11 @@ module "blog_alb" {
     Environment = var.environment.name
     Project     = "Example"
   }
+}
+
+resource "aws_autoscaling_attachment" "blog_asg_attachment" {
+  autoscaling_group_name = module.autoscaling.autoscaling_group_name
+  alb_target_group_arn   = module.blog_alb.target_group_arns[0]
 }
 
 module "blog_sg" {
