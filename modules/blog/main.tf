@@ -46,6 +46,8 @@ module "autoscaling" {
 
   instance_type     = var.instance_type
   image_id          = data.aws_ami.app_ami.id
+  
+  target_group_arns = [values(module.blog_alb.target_groups)[0].arn]
 }
 
 module "blog_alb" {
@@ -74,9 +76,6 @@ module "blog_alb" {
       protocol    = "HTTP"
       port        = 80
       target_type = "instance"
-
-      # ✅ Explicitly disable auto-registering instances
-      targets = []
     }
   }
 
@@ -84,13 +83,6 @@ module "blog_alb" {
     Environment = var.environment.name
     Project     = "Example"
   }
-}
-
-
-
-resource "aws_autoscaling_attachment" "blog_asg_attachment" {
-  autoscaling_group_name = module.autoscaling.autoscaling_group_name
-  lb_target_group_arn    = values(module.blog_alb.target_groups)[0].arn
 }
 
 module "blog_sg" {
