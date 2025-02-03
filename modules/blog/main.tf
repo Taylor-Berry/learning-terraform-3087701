@@ -68,17 +68,17 @@ module "blog_alb" {
     }
   }
 
-   target_groups = {
+  target_groups = {
     ex-instance = {
-      name_prefix = "blog-"
-      protocol    = "HTTP"
-      port        = 80
-      target_type = "instance"
-
-      # ✅ Disable Terraform from creating target group attachments
-      targets = []
+      name_prefix       = "blog-"
+      protocol          = "HTTP"
+      port              = 80
+      target_type       = "instance"
+      create_attachment = false  # 🔴 Add this line to prevent Terraform from expecting target attachments
+      targets           = []
     }
   }
+
 
   tags = {
     Environment = var.environment.name
