@@ -86,9 +86,8 @@ module "blog_alb" {
 
 resource "aws_autoscaling_attachment" "blog_asg_attachment" {
   autoscaling_group_name = module.autoscaling.autoscaling_group_name
-  lb_target_group_arn    = module.blog_alb.lb_target_group_arn[0]  # ✅ Correct
+  lb_target_group_arn    = module.blog_alb.target_group_arns[0]
 }
-
 
 module "blog_sg" {
   source = "terraform-aws-modules/security-group/aws"
