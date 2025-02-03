@@ -70,10 +70,13 @@ module "blog_alb" {
 
   target_groups = {
     ex-instance = {
-      name_prefix      = "${var.environment.name}-"
-      protocol         = "HTTP"
-      port             = 80
-      target_type      = "instance"
+      name_prefix = "${var.environment.name}-"
+      protocol    = "HTTP"
+      port        = 80
+      target_type = "instance"
+
+      # ✅ Explicitly disable auto-registering instances
+      targets = []
     }
   }
 
@@ -82,6 +85,7 @@ module "blog_alb" {
     Project     = "Example"
   }
 }
+
 
 
 resource "aws_autoscaling_attachment" "blog_asg_attachment" {
