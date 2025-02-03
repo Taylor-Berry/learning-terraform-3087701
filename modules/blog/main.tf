@@ -86,7 +86,7 @@ module "blog_alb" {
 
 resource "aws_autoscaling_attachment" "blog_asg_attachment" {
   autoscaling_group_name = module.autoscaling.autoscaling_group_name
-  lb_target_group_arn    = module.blog_alb.target_group_arn
+  lb_target_group_arn    = module.blog_alb.target_group_arns
 }
 
 module "blog_sg" {
