@@ -74,7 +74,7 @@ module "blog_alb" {
       protocol         = "HTTP"
       port             = 80
       target_type      = "instance"
-      targets = []
+      enable_deletion_protection = true
     }
   }
 
