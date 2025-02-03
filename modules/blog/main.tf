@@ -37,20 +37,16 @@ module "blog_vpc" {
 
 module "autoscaling" {
   source = "terraform-aws-modules/autoscaling/aws"
-  name   = "${var.environment.name}-blog"
+  name = "${var.environment.name}-blog"
   min_size = var.asg_min_size
   max_size = var.asg_max_size
 
   vpc_zone_identifier = module.blog_vpc.public_subnets
   security_groups     = [module.blog_sg.security_group_id]
 
-  instance_type = var.instance_type
-  image_id      = data.aws_ami.app_ami.id
-
-  # ✅ Correct argument for attaching ALB Target Group
-  load_balancers = [values(module.blog_alb.target_groups)[0].arn]
+  instance_type     = var.instance_type
+  image_id          = data.aws_ami.app_ami.id
 }
-
 
 module "blog_alb" {
   source = "terraform-aws-modules/alb/aws"
@@ -74,12 +70,10 @@ module "blog_alb" {
 
   target_groups = {
     ex-instance = {
-      name_prefix = "${var.environment.name}-"
-      protocol    = "HTTP"
-      port        = 80
-      target_type = "instance"
-
-      # ❌ REMOVE target_id because ASG dynamically registers instances
+      name_prefix      = "${var.environment.name}-"
+      protocol         = "HTTP"
+      port             = 80
+      target_type      = "instance"
     }
   }
 
@@ -89,6 +83,11 @@ module "blog_alb" {
   }
 }
 
+
+resource "aws_autoscaling_attachment" "blog_asg_attachment" {
+  autoscaling_group_name = module.autoscaling.autoscaling_group_name
+  lb_target_group_arn    = values(module.blog_alb.target_groups)[0].arn
+}
 
 module "blog_sg" {
   source = "terraform-aws-modules/security-group/aws"
