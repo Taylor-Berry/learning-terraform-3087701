@@ -56,7 +56,6 @@ module "blog_alb" {
   subnets         = module.blog_vpc.public_subnets
   security_groups = [module.blog_sg.security_group_id]
 
-
   listeners = {
     ex-http-https-redirect = {
       port     = 80
@@ -75,7 +74,6 @@ module "blog_alb" {
       protocol         = "HTTP"
       port             = 80
       target_type      = "instance"
-      target_id        = module.autoscaling.autoscaling_group_arn
     }
   }
 
@@ -85,9 +83,10 @@ module "blog_alb" {
   }
 }
 
+
 resource "aws_autoscaling_attachment" "blog_asg_attachment" {
   autoscaling_group_name = module.autoscaling.autoscaling_group_name
-  lb_target_group_arn    = module.autoscaling.autoscaling_group_arn
+  lb_target_group_arn    = module.blog_alb.target_group_arn
 }
 
 module "blog_sg" {
