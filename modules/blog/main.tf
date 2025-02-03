@@ -44,7 +44,8 @@ module "autoscaling" {
   vpc_zone_identifier = module.blog_vpc.public_subnets
   security_groups     = [module.blog_sg.security_group_id]
 
-  instance_type = var.instance_type
+  instance_type     = var.instance_type
+  image_id          = "${var.environment.name}-ami-ebd02392"
 }
 
 module "blog_alb" {
