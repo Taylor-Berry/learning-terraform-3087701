@@ -68,11 +68,16 @@ module "blog_alb" {
     }
   }
 
-  target_groups = {
-      name_prefix      = "${var.environment.name}-"
-      protocol         = "HTTP"
-      port             = 80
-      target_type      = "instance"    
+   target_groups = {
+    ex-instance = {
+      name_prefix = "blog-"
+      protocol    = "HTTP"
+      port        = 80
+      target_type = "instance"
+
+      # ✅ Disable Terraform from creating target group attachments
+      targets = []
+    }
   }
 
   tags = {
@@ -80,6 +85,12 @@ module "blog_alb" {
     Project     = "Example"
   }
 }
+
+resource "aws_autoscaling_attachment" "blog_asg_attachment" {
+  autoscaling_group_name = module.autoscaling.autoscaling_group_name
+  lb_target_group_arn    = values(module.blog_alb.target_groups)[0].arn
+}
+
 
 module "blog_sg" {
   source = "terraform-aws-modules/security-group/aws"
